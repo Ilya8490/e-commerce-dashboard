@@ -210,9 +210,9 @@ Phase 1 - Project Foundation - Complete
 
 Phase 2 - Authentication - Complete
 
-Phase 3 - Analytics Models
+Phase 3 - Analytics Models - Complete
 
-Phase 4 - Seed System
+Phase 4 - Seed System - Complete
 
 Phase 5 - Dashboard API
 
@@ -255,6 +255,7 @@ Available commands:
 ```bash
 npm run dev
 npm run lint
+npm run seed
 npm run test
 npm run typecheck
 ```
@@ -299,6 +300,72 @@ Manual auth test flow:
 7. Logout with `POST http://localhost:4000/api/auth/logout`
 8. Confirm `GET http://localhost:4000/api/auth/me` returns `401`
 
+## Phase 3 Status
+
+Completed analytics model work:
+
+- Added MongoDB/Mongoose models for:
+  - `Order`
+  - `Product`
+  - `Customer`
+  - `Session`
+  - `FunnelEvent`
+- Added optional `externalId` fields to `Order`, `Product`, and `Customer`
+- Reserved `externalId` for future WooCommerce entity IDs
+- Added model indexes for query and sync readiness:
+  - `userId`
+  - `createdAt` on created analytics entities
+  - `date` on time-series analytics entities
+  - compound sparse `{ userId, externalId }` where WooCommerce mapping will apply
+- Updated shared TypeScript contracts to align with backend analytics models
+- Added model tests for enums, indexes, optional external IDs, and seed-compatible order structure
+
+WooCommerce integration note:
+
+No WooCommerce API connection is implemented in this phase. The models are only prepared for future synchronization.
+
+## Phase 4 Status
+
+Completed seed system work:
+
+- Added `server/scripts/seed.ts`
+- Added root `npm run seed` command
+- Seed script drops and recreates the target MongoDB database
+- Seed script is idempotent
+- Demo user is created with bcrypt password hashing:
+  - Email: `demo@demo.com`
+  - Password: `demo1234`
+  - Store Name: `Demo Store`
+- Generated related demo analytics data:
+  - 20 products
+  - 20 customers
+  - 50 orders
+  - 90 session records
+  - 450 funnel event records across 90 days
+- Orders are linked to customers and products
+- Order totals are calculated from product item prices
+- `externalId` remains unset for products, customers, and orders until WooCommerce integration exists
+- Added seed tests for counts, relationships, idempotency, password hashing, order totals, and funnel progression
+
+Latest seed statistics:
+
+```text
+users:        1
+products:     20
+customers:    20
+orders:       50
+sessions:     90
+funnelEvents: 450
+```
+
+Manual seed test flow:
+
+1. Copy `server/.env.example` to `server/.env` if needed
+2. Set `MONGO_URI`
+3. Run `npm run seed`
+4. Confirm the command prints the expected seed statistics
+5. Re-run `npm run seed` and confirm the same statistics are printed again
+
 Next phase:
 
-Phase 3 - Analytics Models
+Phase 5 - Dashboard API

@@ -1,9 +1,10 @@
 export type {
   CurrencyCode,
   Customer,
+  Device,
   EntityId,
   FunnelEvent,
-  FunnelEventType,
+  FunnelStep,
   Order,
   OrderLineItem,
   OrderStatus,

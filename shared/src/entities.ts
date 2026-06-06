@@ -2,11 +2,13 @@ export type EntityId = string;
 
 export type CurrencyCode = "USD" | "EUR" | "GBP";
 
-export type OrderStatus = "pending" | "paid" | "fulfilled" | "cancelled" | "refunded";
+export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 
 export type TrafficSource = "organic" | "paid" | "direct" | "social" | "email";
 
-export type FunnelEventType =
+export type Device = "desktop" | "mobile" | "tablet";
+
+export type FunnelStep =
   | "visit"
   | "product_view"
   | "add_to_cart"
@@ -15,43 +17,43 @@ export type FunnelEventType =
 
 export interface Product {
   id: EntityId;
+  userId: EntityId;
+  externalId?: string;
   name: string;
-  sku: string;
+  category: string;
   price: number;
-  currency: CurrencyCode;
-  inventoryQuantity: number;
+  stock: number;
+  soldUnits: number;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface Customer {
   id: EntityId;
+  userId: EntityId;
+  externalId?: string;
+  name: string;
   email: string;
-  firstName: string;
-  lastName: string;
   totalOrders: number;
   lifetimeValue: number;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface OrderLineItem {
   productId: EntityId;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
+  qty: number;
+  price: number;
 }
 
 export interface Order {
   id: EntityId;
+  userId: EntityId;
+  externalId?: string;
   customerId: EntityId;
   status: OrderStatus;
   items: OrderLineItem[];
-  subtotal: number;
   total: number;
-  currency: CurrencyCode;
-  placedAt: string;
+  source: TrafficSource;
+  createdAt: string;
 }
 
 export interface User {
@@ -64,18 +66,18 @@ export interface User {
 
 export interface Session {
   id: EntityId;
-  customerId?: EntityId;
+  userId: EntityId;
+  date: string;
+  visits: number;
   source: TrafficSource;
-  startedAt: string;
-  endedAt?: string;
+  device: Device;
+  bounced: boolean;
 }
 
 export interface FunnelEvent {
   id: EntityId;
-  sessionId: EntityId;
-  customerId?: EntityId;
-  productId?: EntityId;
-  orderId?: EntityId;
-  type: FunnelEventType;
-  occurredAt: string;
+  userId: EntityId;
+  step: FunnelStep;
+  count: number;
+  date: string;
 }
