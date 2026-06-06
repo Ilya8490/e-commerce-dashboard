@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 
 import { authRouter } from "./auth/auth.routes";
+import { dashboardRouter } from "./dashboard/dashboard.routes";
 
 export function createApp() {
   const app = express();
@@ -21,6 +22,7 @@ export function createApp() {
   });
 
   app.use("/api/auth", authRouter);
+  app.use("/api", dashboardRouter);
 
   return app;
 }

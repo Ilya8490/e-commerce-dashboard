@@ -52,7 +52,7 @@ const demoUser = {
   storeName: "Demo Store"
 };
 
-const products: ProductSeed[] = [
+const baseProducts: ProductSeed[] = [
   { name: "Classic Cotton T-Shirt", category: "Apparel", price: 24.99, stock: 84, soldUnits: 182 },
   { name: "Organic Denim Jacket", category: "Apparel", price: 89.99, stock: 31, soldUnits: 76 },
   { name: "Running Performance Shoes", category: "Footwear", price: 119.99, stock: 42, soldUnits: 94 },
@@ -73,6 +73,50 @@ const products: ProductSeed[] = [
   { name: "Woven Storage Basket", category: "Home Decor", price: 42.99, stock: 35, soldUnits: 69 },
   { name: "Smart LED Light Strip", category: "Electronics", price: 34.99, stock: 79, soldUnits: 174 },
   { name: "Travel Packing Cubes", category: "Accessories", price: 26.99, stock: 88, soldUnits: 163 }
+];
+
+const additionalProductNames = [
+  ["Merino Wool Crewneck", "Apparel"],
+  ["Relaxed Fit Chinos", "Apparel"],
+  ["Trail Running Socks", "Footwear"],
+  ["Waterproof Hiking Boots", "Footwear"],
+  ["Walnut Monitor Riser", "Home Office"],
+  ["Cable Management Kit", "Home Office"],
+  ["RFID Travel Wallet", "Accessories"],
+  ["Recycled Canvas Backpack", "Accessories"],
+  ["USB-C Charging Hub", "Electronics"],
+  ["Compact Action Camera", "Electronics"],
+  ["Cast Iron Skillet", "Kitchen"],
+  ["Bamboo Cutting Board", "Kitchen"],
+  ["Vitamin C Brightening Cream", "Beauty"],
+  ["Hydrating Lip Balm Trio", "Beauty"],
+  ["Foam Recovery Roller", "Fitness"],
+  ["Weighted Jump Rope", "Fitness"],
+  ["Scented Soy Candle", "Home Decor"],
+  ["Framed Botanical Print", "Home Decor"],
+  ["Insulated Lunch Box", "Kitchen"],
+  ["Quick Dry Gym Towel", "Fitness"],
+  ["Oversized Hoodie", "Apparel"],
+  ["Slip-On Knit Loafers", "Footwear"],
+  ["Adjustable Desk Organizer", "Home Office"],
+  ["Crossbody Phone Sling", "Accessories"],
+  ["Smart Home Plug Pair", "Electronics"],
+  ["Glass Food Storage Set", "Kitchen"],
+  ["Gentle Exfoliating Toner", "Beauty"],
+  ["Balance Board Trainer", "Fitness"],
+  ["Cotton Knit Blanket", "Home Decor"],
+  ["Mini Travel Steamer", "Accessories"]
+] satisfies Array<[string, string]>;
+
+const products: ProductSeed[] = [
+  ...baseProducts,
+  ...additionalProductNames.map(([name, category], index) => ({
+    name,
+    category,
+    price: roundCurrency(18.99 + ((index * 11) % 120) + (index % 4) * 0.5),
+    stock: 22 + ((index * 9) % 96),
+    soldUnits: 34 + ((index * 17) % 210)
+  }))
 ];
 
 const customers: CustomerSeed[] = [

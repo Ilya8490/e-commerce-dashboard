@@ -28,7 +28,7 @@ describe("seedDatabase", () => {
     expect(secondRun).toEqual(firstRun);
     expect(secondRun).toMatchObject({
       users: 1,
-      products: 20,
+      products: 50,
       customers: 20,
       orders: 50,
       sessions: 90,
@@ -46,7 +46,7 @@ describe("seedDatabase", () => {
     const sessions = await SessionModel.find({ userId: user?._id }).lean();
     const funnelEvents = await FunnelEventModel.find({ userId: user?._id }).lean();
 
-    expect(products).toHaveLength(20);
+    expect(products).toHaveLength(50);
     expect(customers).toHaveLength(20);
     expect(orders).toHaveLength(50);
     expect(sessions).toHaveLength(90);
