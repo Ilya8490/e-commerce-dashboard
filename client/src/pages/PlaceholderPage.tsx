@@ -1,5 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
+import { Card, CardContent } from "../components/ui/card";
+
 interface PlaceholderPageProps {
   title: string;
   description: string;
@@ -20,10 +22,12 @@ export function PlaceholderPage({ title, description, icon: Icon }: PlaceholderP
       </div>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {["Primary metric", "Recent movement", "Next view"].map((label) => (
-          <div className="rounded-lg border border-border bg-card p-5 text-card-foreground" key={label}>
-            <p className="text-sm text-muted-foreground">{label}</p>
-            <p className="mt-3 text-2xl font-semibold">Phase 7</p>
-          </div>
+          <Card key={label}>
+            <CardContent className="p-5">
+              <p className="text-sm text-muted-foreground">{label}</p>
+              <p className="mt-3 text-2xl font-semibold">Phase 7</p>
+            </CardContent>
+          </Card>
         ))}
       </div>
       <div className="mt-6 rounded-lg border border-dashed border-border bg-muted/40 p-8">

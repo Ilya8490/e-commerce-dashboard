@@ -50,10 +50,17 @@ describe("dashboard API", () => {
       aov: expect.any(Number),
       revenueDelta: expect.any(Number),
       ordersDelta: expect.any(Number),
-      revenueChart: expect.any(Array)
+      revenueChart: expect.any(Array),
+      orderStatusChart: expect.any(Array)
     });
     expect(response.body.orders).toBe(48);
     expect(response.body.revenue).toBeGreaterThan(0);
+    expect(response.body.orderStatusChart).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ status: "delivered", count: expect.any(Number) }),
+        expect.objectContaining({ status: "cancelled", count: expect.any(Number) })
+      ])
+    );
   });
 
   it("returns searchable and paginated product metrics", async () => {

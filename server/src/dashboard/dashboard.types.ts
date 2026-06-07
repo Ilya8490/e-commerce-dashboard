@@ -11,6 +11,11 @@ export interface RevenuePoint {
   revenue: number;
 }
 
+export interface OrderStatusPoint {
+  status: string;
+  count: number;
+}
+
 export interface DashboardProduct extends Product {
   revenue: number;
   unitsSold: number;

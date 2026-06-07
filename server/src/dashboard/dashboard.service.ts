@@ -63,11 +63,12 @@ export class DashboardService {
 
   async getOverview(userId: string, range: DateRange) {
     const prior = previousRange(range);
-    const [currentTotals, priorTotals, visits, revenueByDate] = await Promise.all([
+    const [currentTotals, priorTotals, visits, revenueByDate, orderStatusChart] = await Promise.all([
       this.commerce.getOrderTotals(userId, range),
       this.commerce.getOrderTotals(userId, prior),
       this.commerce.getVisitCount(userId, range),
-      this.commerce.getRevenueByDate(userId, range)
+      this.commerce.getRevenueByDate(userId, range),
+      this.commerce.getOrderStatusCounts(userId, range)
     ]);
     const revenueChart: RevenuePoint[] = dateKeys(range).map((date) => ({
       date,
@@ -81,7 +82,8 @@ export class DashboardService {
       aov: currentTotals.orders === 0 ? 0 : round(currentTotals.revenue / currentTotals.orders),
       revenueDelta: percentageDelta(currentTotals.revenue, priorTotals.revenue),
       ordersDelta: percentageDelta(currentTotals.orders, priorTotals.orders),
-      revenueChart
+      revenueChart,
+      orderStatusChart
     };
   }
 

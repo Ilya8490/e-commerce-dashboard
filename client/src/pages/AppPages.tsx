@@ -1,26 +1,10 @@
-import { BarChart3, Boxes, Gauge, Users, Waypoints } from "lucide-react";
+import { BarChart3, Users, Waypoints } from "lucide-react";
 
+import { DashboardPage } from "./DashboardPage";
 import { PlaceholderPage } from "./PlaceholderPage";
-
-export function DashboardPage() {
-  return (
-    <PlaceholderPage
-      description="Overview KPIs, revenue trend, and operating highlights will connect to the dashboard API here."
-      icon={Gauge}
-      title="Dashboard"
-    />
-  );
-}
-
-export function ProductsPage() {
-  return (
-    <PlaceholderPage
-      description="Product search, pagination, and revenue or unit sorting will appear in this workspace."
-      icon={Boxes}
-      title="Products"
-    />
-  );
-}
+import { ProductsPage } from "./ProductsPage";
+export { DashboardPage };
+export { ProductsPage };
 
 export function FunnelPage() {
   return (

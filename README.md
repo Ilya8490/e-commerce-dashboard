@@ -28,11 +28,11 @@ The project is designed as a portfolio application and currently uses seeded moc
 
 ### Dashboard
 
-- Revenue overview
-- Orders overview
-- Conversion rate
-- Average order value
-- Revenue trends
+- Revenue, orders, conversion rate, and average order value KPI cards
+- Delta badges for revenue and order movement
+- Revenue trend line chart
+- Orders by status donut chart
+- Loading and error states for dashboard data
 
 ### Products
 
@@ -214,13 +214,13 @@ Phase 3 - Analytics Models - Complete
 
 Phase 4 - Seed System - Complete
 
-Phase 5 - Dashboard API
+Phase 5 - Dashboard API - Complete
 
-Phase 6 - Frontend Foundation
+Phase 6 - Frontend Foundation - Complete
 
-Phase 7 - Dashboard UI
+Phase 7 - Dashboard UI - Complete
 
-Phase 8 - Products
+Phase 8 - Products - Complete
 
 Phase 9 - Funnel & Traffic
 
@@ -337,7 +337,7 @@ Completed seed system work:
   - Password: `demo1234`
   - Store Name: `Demo Store`
 - Generated related demo analytics data:
-  - 20 products
+  - 50 products
   - 20 customers
   - 50 orders
   - 90 session records
@@ -351,7 +351,7 @@ Latest seed statistics:
 
 ```text
 users:        1
-products:     20
+products:     50
 customers:    20
 orders:       50
 sessions:     90
@@ -366,6 +366,143 @@ Manual seed test flow:
 4. Confirm the command prints the expected seed statistics
 5. Re-run `npm run seed` and confirm the same statistics are printed again
 
+## Phase 5 Status
+
+Completed dashboard API work:
+
+- Added protected REST endpoints under `/api`
+- All dashboard routes use auth middleware
+- Routes call services, services call the commerce adapter, and the adapter owns MongoDB access
+- Added overview endpoint:
+  - `GET /api/dashboard/overview?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Added product endpoint:
+  - `GET /api/products?sort=revenue|units&order=asc|desc&search=&page=1&limit=20`
+- Added funnel endpoint:
+  - `GET /api/funnel?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Added traffic endpoint:
+  - `GET /api/traffic?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Added customer endpoint:
+  - `GET /api/customers?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Added CSV export endpoint:
+  - `GET /api/export/csv?entity=orders|products&from=YYYY-MM-DD&to=YYYY-MM-DD`
+
+The overview endpoint now returns:
+
+```json
+{
+  "revenue": 6328.55,
+  "orders": 48,
+  "cvr": 0.06,
+  "aov": 131.84,
+  "revenueDelta": 100,
+  "ordersDelta": 100,
+  "revenueChart": [{ "date": "2026-05-01", "revenue": 405.46 }],
+  "orderStatusChart": [{ "status": "delivered", "count": 30 }]
+}
+```
+
+## Phase 6 Status
+
+Completed frontend foundation work:
+
+- Added React Router v6 routes for:
+  - `/login`
+  - `/register`
+  - `/dashboard`
+  - `/products`
+  - `/funnel`
+  - `/traffic`
+  - `/customers`
+- Added auth context and protected route handling
+- Added Axios API client with `withCredentials: true`
+- Added TanStack Query provider
+- Added Zustand global store for:
+  - `theme`
+  - `dateRange`
+- Added persisted light/dark mode support
+- Added Tailwind CSS setup
+- Added shadcn-style UI primitives:
+  - `Button`
+  - `Card`
+  - `Input`
+  - `Label`
+- Added app layout with sidebar and topbar
+- Added placeholder protected pages
+- Added root error boundary
+
+## Phase 7 Status
+
+Completed dashboard UI work:
+
+- Replaced the dashboard placeholder with a real dashboard page
+- Connected the page to:
+  - `GET /api/dashboard/overview?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Uses TanStack Query and the shared Axios client
+- Uses the global Zustand `dateRange`
+- Added KPI cards for:
+  - Total Revenue
+  - Total Orders
+  - Conversion Rate
+  - Average Order Value
+- Added loading skeletons and error fallbacks
+- Added revenue `LineChart` using Recharts
+- Added orders by status donut chart using Recharts
+- Added backend `orderStatusChart` data to the overview response
+- Kept existing overview response fields unchanged
+- Dark and light mode styling is supported by the shared theme tokens
+
+Dashboard screenshot placeholder:
+
+```text
+docs/screenshots/dashboard-phase-7.png
+```
+
+Known limitations:
+
+- Date range controls are stored in Zustand but are not exposed as editable UI controls yet
+- Dashboard charts use seeded demo data only
+- Funnel, traffic, and customers pages remain Phase 6 placeholders
+- WooCommerce integration is not implemented yet
+
+## Phase 8 Status
+
+Completed products page work:
+
+- Replaced the products placeholder with a real products table page
+- Connected the page to:
+  - `GET /api/products?sort=revenue|units&order=asc|desc&search=&page=1&limit=20`
+- Uses TanStack Query and the shared Axios client
+- Added 300ms debounced search by product name or category
+- Added sort controls for:
+  - Revenue
+  - Units
+- Added order controls for:
+  - Asc
+  - Desc
+- Added pagination and page size controls
+- Added responsive products table with:
+  - Row number
+  - Product name
+  - Category
+  - Price
+  - Units sold
+  - Revenue
+  - Stock
+- Price and revenue values are formatted as EUR in the UI
+- Added low-stock badge for products with stock below 10
+- Added loading skeletons, empty state, and error state
+- Added CSV export button using:
+  - `GET /api/export/csv?entity=products`
+- CSV export downloads through the browser with the existing httpOnly cookie session
+- Dark and light mode styling remains supported by shared theme tokens
+
+Known limitations:
+
+- Product data still comes from seeded demo records
+- CSV export uses the backend's default date range unless date filters are added to the UI
+- Product table does not yet include product detail drill-downs or inventory actions
+- Funnel, traffic, and customers pages remain placeholders
+
 Next phase:
 
-Phase 5 - Dashboard API
+Phase 9 - Funnel & Traffic

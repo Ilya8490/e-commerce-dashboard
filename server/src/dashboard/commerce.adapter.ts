@@ -9,7 +9,13 @@ import {
   type OrderDocument,
   type ProductDocument
 } from "../analytics";
-import { funnelSteps, type FunnelStep, type TrafficSource } from "../analytics/analytics.enums";
+import {
+  funnelSteps,
+  orderStatuses,
+  type FunnelStep,
+  type OrderStatus,
+  type TrafficSource
+} from "../analytics/analytics.enums";
 import { FunnelEventModel } from "../analytics/funnel-event.model";
 import type { DashboardProduct, DateRange, ProductQuery, TrafficSourceResult } from "./dashboard.types";
 
@@ -96,6 +102,28 @@ export class CommerceAdapter {
     ]);
 
     return new Map(rows.map((row) => [row._id, round(row.revenue)]));
+  }
+
+  async getOrderStatusCounts(userId: string, range: DateRange): Promise<Array<{ status: OrderStatus; count: number }>> {
+    const rows = await OrderModel.aggregate<{ _id: OrderStatus; count: number }>([
+      { $match: orderDateFilter(userId, range, false) },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    const counts = new Map<OrderStatus, number>(orderStatuses.map((status) => [status, 0]));
+
+    for (const row of rows) {
+      counts.set(row._id, row.count);
+    }
+
+    return orderStatuses.map((status) => ({
+      status,
+      count: counts.get(status) ?? 0
+    }));
   }
 
   async getVisitCount(userId: string, range: DateRange): Promise<number> {
