@@ -7,7 +7,7 @@ import { createApp } from "../app";
 import { seedDatabase } from "../../scripts/seed";
 
 const app = createApp();
-const rangeQuery = "from=2026-01-01&to=2026-12-31";
+const rangeQuery = "from=2025-01-01&to=2026-12-31";
 
 describe("dashboard API", () => {
   let mongo: MongoMemoryServer;
@@ -53,7 +53,7 @@ describe("dashboard API", () => {
       revenueChart: expect.any(Array),
       orderStatusChart: expect.any(Array)
     });
-    expect(response.body.orders).toBe(48);
+    expect(response.body.orders).toBe(288);
     expect(response.body.revenue).toBeGreaterThan(0);
     expect(response.body.orderStatusChart).toEqual(
       expect.arrayContaining([

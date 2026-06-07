@@ -28,11 +28,11 @@ describe("seedDatabase", () => {
     expect(secondRun).toEqual(firstRun);
     expect(secondRun).toMatchObject({
       users: 1,
-      products: 50,
-      customers: 20,
-      orders: 50,
-      sessions: 90,
-      funnelEvents: 450
+      products: 100,
+      customers: 60,
+      orders: 300,
+      sessions: 180,
+      funnelEvents: 900
     });
 
     const user = await UserModel.findOne({ email: "demo@demo.com" }).lean();
@@ -46,11 +46,11 @@ describe("seedDatabase", () => {
     const sessions = await SessionModel.find({ userId: user?._id }).lean();
     const funnelEvents = await FunnelEventModel.find({ userId: user?._id }).lean();
 
-    expect(products).toHaveLength(50);
-    expect(customers).toHaveLength(20);
-    expect(orders).toHaveLength(50);
-    expect(sessions).toHaveLength(90);
-    expect(funnelEvents).toHaveLength(450);
+    expect(products).toHaveLength(100);
+    expect(customers).toHaveLength(60);
+    expect(orders).toHaveLength(300);
+    expect(sessions).toHaveLength(180);
+    expect(funnelEvents).toHaveLength(900);
     expect(products.every((product) => product.externalId === undefined)).toBe(true);
     expect(customers.every((customer) => customer.externalId === undefined)).toBe(true);
     expect(orders.every((order) => order.externalId === undefined)).toBe(true);
@@ -68,7 +68,7 @@ describe("seedDatabase", () => {
     }
 
     const funnelDates = new Set(funnelEvents.map((event) => event.date.toISOString().slice(0, 10)));
-    expect(funnelDates.size).toBe(90);
+    expect(funnelDates.size).toBe(180);
 
     for (const date of funnelDates) {
       const eventsForDate = funnelEvents.filter((event) => event.date.toISOString().startsWith(date));

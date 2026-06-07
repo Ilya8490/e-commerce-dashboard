@@ -46,6 +46,11 @@ interface CreatedCustomer extends CustomerSeed {
   _id: Types.ObjectId;
 }
 
+const productCount = 100;
+const customerCount = 60;
+const orderCount = 300;
+const analyticsDays = 180;
+
 const demoUser = {
   email: "demo@demo.com",
   password: "demo1234",
@@ -116,10 +121,22 @@ const products: ProductSeed[] = [
     price: roundCurrency(18.99 + ((index * 11) % 120) + (index % 4) * 0.5),
     stock: 22 + ((index * 9) % 96),
     soldUnits: 34 + ((index * 17) % 210)
-  }))
+  })),
+  ...Array.from({ length: productCount - baseProducts.length - additionalProductNames.length }, (_, index) => {
+    const categories = ["Apparel", "Footwear", "Home Office", "Accessories", "Electronics", "Kitchen", "Beauty", "Fitness", "Home Decor"];
+    const category = categories[index % categories.length];
+
+    return {
+      name: `${category} Demo SKU ${String(index + 1).padStart(2, "0")}`,
+      category,
+      price: roundCurrency(14.99 + ((index * 13) % 160) + (index % 3) * 0.75),
+      stock: 4 + ((index * 11) % 140),
+      soldUnits: 20 + ((index * 19) % 320)
+    };
+  })
 ];
 
-const customers: CustomerSeed[] = [
+const baseCustomers: CustomerSeed[] = [
   customer("Ava Johnson", "ava.johnson@example.com", 86),
   customer("Noah Smith", "noah.smith@example.com", 79),
   customer("Mia Williams", "mia.williams@example.com", 74),
@@ -140,6 +157,17 @@ const customers: CustomerSeed[] = [
   customer("Henry Martinez", "henry.martinez@example.com", 5),
   customer("Chloe Robinson", "chloe.robinson@example.com", 3),
   customer("Daniel Clark", "daniel.clark@example.com", 1)
+];
+
+const customers: CustomerSeed[] = [
+  ...baseCustomers,
+  ...Array.from({ length: customerCount - baseCustomers.length }, (_, index) =>
+    customer(
+      `Demo Customer ${String(index + 1).padStart(2, "0")}`,
+      `demo.customer.${String(index + 1).padStart(2, "0")}@example.com`,
+      1 + ((index * 4) % (analyticsDays - 1))
+    )
+  )
 ];
 
 const orderStatuses: OrderStatus[] = [
@@ -197,15 +225,14 @@ function roundCurrency(value: number) {
 }
 
 function orderDate(index: number) {
-  const spreadDays = 89 - Math.floor((index * 90) / 50);
+  const spreadDays = analyticsDays - 1 - Math.floor((index * analyticsDays) / orderCount);
   const date = daysAgo(spreadDays);
   date.setHours(9 + (index % 10), (index * 7) % 60, 0, 0);
   return date;
 }
 
 function customerIndexForOrder(index: number) {
-  const returningCustomerPattern = [0, 1, 2, 3, 4, 5, 0, 1, 6, 7, 2, 8, 9, 10, 3, 11, 12, 4, 13, 14];
-  return returningCustomerPattern[index % returningCustomerPattern.length];
+  return (index * 7 + Math.floor(index / 5)) % customers.length;
 }
 
 function productIndexesForOrder(index: number) {
@@ -270,7 +297,7 @@ async function createProducts(userId: Types.ObjectId): Promise<CreatedProduct[]>
       price: product.price,
       stock: product.stock,
       soldUnits: product.soldUnits,
-      createdAt: daysAgo(89)
+      createdAt: daysAgo(analyticsDays - 1)
     }))
   );
 }
@@ -295,7 +322,7 @@ async function createOrders(
 ) {
   const customerStats = new Map<string, { totalOrders: number; lifetimeValue: number }>();
 
-  const orderDocuments = Array.from({ length: 50 }, (_, index) => {
+  const orderDocuments = Array.from({ length: orderCount }, (_, index) => {
     const customerForOrder = createdCustomers[customerIndexForOrder(index)];
     const items = productIndexesForOrder(index).map((productIndex, itemIndex) => {
       const product = createdProducts[productIndex];
@@ -308,7 +335,7 @@ async function createOrders(
       };
     });
     const total = roundCurrency(items.reduce((sum, item) => sum + item.qty * item.price, 0));
-    const status = orderStatuses[index];
+    const status = orderStatuses[index % orderStatuses.length];
 
     if (status !== "cancelled") {
       const key = customerForOrder._id.toString();
@@ -324,7 +351,7 @@ async function createOrders(
       status,
       total,
       items,
-      source: trafficSources[index],
+      source: trafficSources[index % trafficSources.length],
       createdAt: orderDate(index)
     };
   });
@@ -354,8 +381,8 @@ async function createOrders(
 }
 
 async function createSessions(userId: Types.ObjectId) {
-  const documents = Array.from({ length: 90 }, (_, index) => {
-    const day = 89 - index;
+  const documents = Array.from({ length: analyticsDays }, (_, index) => {
+    const day = analyticsDays - 1 - index;
     const weekdayBoost = index % 7 === 1 || index % 7 === 2 ? 85 : 0;
     const campaignBoost = index >= 62 ? 120 : index >= 35 ? 60 : 0;
     const visits = 520 + index * 5 + weekdayBoost + campaignBoost + (index % 5) * 18;
@@ -374,8 +401,8 @@ async function createSessions(userId: Types.ObjectId) {
 }
 
 async function createFunnelEvents(userId: Types.ObjectId) {
-  const documents = Array.from({ length: 90 }, (_, index) => {
-    const day = 89 - index;
+  const documents = Array.from({ length: analyticsDays }, (_, index) => {
+    const day = analyticsDays - 1 - index;
     const visits = 650 + index * 7 + (index % 6) * 23 + (index >= 60 ? 130 : 0);
     const productViews = Math.round(visits * (0.44 + (index % 4) * 0.015));
     const addToCart = Math.round(productViews * (0.34 + (index % 3) * 0.018));
