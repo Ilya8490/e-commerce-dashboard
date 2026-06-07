@@ -222,11 +222,13 @@ Phase 7 - Dashboard UI - Complete
 
 Phase 8 - Products - Complete
 
-Phase 9 - Funnel & Traffic
+Phase 9 - Funnel & Traffic - Complete
 
-Phase 10 - Deployment
+Phase 10 - Customers - Complete
 
-Phase 11 - WooCommerce Integration
+Phase 11 - Deployment
+
+Phase 12 - WooCommerce Integration
 
 Maintain README.md throughout development. After each completed phase, update the README with architecture decisions, available features, setup instructions, and progress status.
 
@@ -461,7 +463,6 @@ Known limitations:
 
 - Date range controls are stored in Zustand but are not exposed as editable UI controls yet
 - Dashboard charts use seeded demo data only
-- Funnel, traffic, and customers pages remain Phase 6 placeholders
 - WooCommerce integration is not implemented yet
 
 ## Phase 8 Status
@@ -501,8 +502,70 @@ Known limitations:
 - Product data still comes from seeded demo records
 - CSV export uses the backend's default date range unless date filters are added to the UI
 - Product table does not yet include product detail drill-downs or inventory actions
-- Funnel, traffic, and customers pages remain placeholders
+
+## Phase 9 Status
+
+Completed funnel and traffic page work:
+
+- Replaced the funnel placeholder with a real funnel analytics page
+- Connected the funnel page to:
+  - `GET /api/funnel?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Uses TanStack Query and the shared Axios client
+- Uses the global Zustand `dateRange`
+- Added funnel summary cards
+- Added horizontal Recharts `BarChart` in a `ResponsiveContainer`
+- Added step-by-step conversion table for:
+  - Visit
+  - Product View
+  - Add To Cart
+  - Checkout
+  - Order
+- Shows count and conversion rate from the previous step
+- Added loading skeleton, error state, and empty state
+- Replaced the traffic placeholder with a real traffic analytics page
+- Connected the traffic page to:
+  - `GET /api/traffic?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Added traffic source summary cards
+- Added Recharts donut chart in a `ResponsiveContainer`
+- Added traffic source performance list with visits and percentage share
+- Added top source summary
+- Added loading skeleton, error state, and empty state
+- Dark and light mode styling remains supported by shared theme tokens
+
+Known limitations:
+
+- Funnel and traffic data still comes from seeded demo records
+- Date range controls are stored in Zustand but still are not exposed as editable UI controls
+- WooCommerce integration is not implemented yet
+
+## Phase 10 Status
+
+Completed customers page work:
+
+- Replaced the customers placeholder with a real customers page
+- Connected the page to:
+  - `GET /api/customers?from=YYYY-MM-DD&to=YYYY-MM-DD`
+- Uses TanStack Query and the shared Axios client
+- Uses the global Zustand `dateRange`
+- Added summary cards for:
+  - New Customers
+  - Returning Customers
+  - Total Customers
+- Added top customers by LTV table with:
+  - Name
+  - Email
+  - Lifetime Value
+- Lifetime value is formatted as EUR in the UI
+- Added loading skeletons, error state, and empty state
+- Dark and light mode styling remains supported by shared theme tokens
+
+Known limitations:
+
+- Customer data still comes from seeded demo records
+- Date range controls are stored in Zustand but still are not exposed as editable UI controls
+- Customer detail drill-downs are not implemented yet
+- WooCommerce integration is not implemented yet
 
 Next phase:
 
-Phase 9 - Funnel & Traffic
+Phase 11 - Deployment
