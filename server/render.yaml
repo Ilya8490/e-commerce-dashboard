@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ecommerce-dashboard-api
+    env: node
+    buildCommand: npm install && npm run build -w @ecommerce-dashboard/shared && npm run build -w @ecommerce-dashboard/server
+    startCommand: npm run start -w @ecommerce-dashboard/server
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        sync: false

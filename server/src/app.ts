@@ -5,12 +5,18 @@ import express from "express";
 import { authRouter } from "./auth/auth.routes";
 import { dashboardRouter } from "./dashboard/dashboard.routes";
 
+function allowedOrigins() {
+  const configuredOrigins = process.env.CLIENT_URL ?? process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
+
+  return configuredOrigins.split(",").map((origin) => origin.trim());
+}
+
 export function createApp() {
   const app = express();
 
   app.use(
     cors({
-      origin: process.env.CLIENT_ORIGIN ?? "http://localhost:5173",
+      origin: allowedOrigins(),
       credentials: true
     })
   );

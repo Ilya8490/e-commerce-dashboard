@@ -125,6 +125,9 @@ Planned Environment Variables:
 ```env
 MONGO_URI=
 JWT_SECRET=
+CLIENT_URL=
+NODE_ENV=production
+PORT=
 WC_API_URL=
 WC_CONSUMER_KEY=
 WC_CONSUMER_SECRET=
@@ -182,6 +185,91 @@ Run type checking
 npm run typecheck
 ```
 
+Build all workspaces
+
+```bash
+npm run build
+```
+
+### Local Environment
+
+Create `server/.env` from `server/.env.example`:
+
+```env
+MONGO_URI=mongodb://localhost:27017/ecommerce_analytics_dashboard
+JWT_SECRET=replace-with-a-long-random-secret
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
+PORT=4000
+```
+
+Create `client/.env` from `client/.env.example`:
+
+```env
+VITE_API_BASE_URL=http://localhost:4000/api
+```
+
+### Production Environment
+
+Backend environment variables:
+
+```env
+MONGO_URI=mongodb+srv://...
+JWT_SECRET=<long-random-production-secret>
+CLIENT_URL=https://your-vercel-app.vercel.app
+NODE_ENV=production
+PORT=<provided-by-host>
+```
+
+Frontend environment variables:
+
+```env
+VITE_API_BASE_URL=https://your-render-api.onrender.com/api
+```
+
+Production cookie/auth notes:
+
+- Auth uses httpOnly cookies.
+- Cookies are `secure: true` when `NODE_ENV=production`.
+- Cookies use `sameSite: none` in production for Vercel-to-Render cross-site requests.
+- CORS allows credentials and uses `CLIENT_URL` as the allowed frontend origin.
+- Local development keeps non-secure `sameSite: lax` cookies for `localhost`.
+
+### Vercel Frontend Deployment
+
+The frontend is configured with `client/vercel.json`.
+
+Vercel settings:
+
+- Root directory: `client`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Environment variable:
+  - `VITE_API_BASE_URL=https://your-render-api.onrender.com/api`
+
+`client/vercel.json` includes an SPA fallback so direct visits to routes like `/dashboard`, `/products`, and `/customers` serve `index.html`.
+
+### Render Backend Deployment
+
+The backend includes `server/render.yaml`.
+
+Render setup:
+
+- Service type: Web Service
+- Runtime: Node
+- Build command:
+  - `npm install && npm run build -w @ecommerce-dashboard/shared && npm run build -w @ecommerce-dashboard/server`
+- Start command:
+  - `npm run start -w @ecommerce-dashboard/server`
+- Required environment variables:
+  - `MONGO_URI`
+  - `JWT_SECRET`
+  - `CLIENT_URL`
+  - `NODE_ENV=production`
+  - `PORT`
+
+Use MongoDB Atlas for `MONGO_URI` in production.
+
 ---
 
 ## Project Structure
@@ -226,7 +314,7 @@ Phase 9 - Funnel & Traffic - Complete
 
 Phase 10 - Customers - Complete
 
-Phase 11 - Deployment
+Phase 11 - Deployment - Complete
 
 Phase 12 - WooCommerce Integration
 
@@ -566,6 +654,49 @@ Known limitations:
 - Customer detail drill-downs are not implemented yet
 - WooCommerce integration is not implemented yet
 
+## Phase 11 Status
+
+Completed deployment readiness work:
+
+- Added root build script:
+  - `npm run build`
+- Added client build script:
+  - `npm run build -w @ecommerce-dashboard/client`
+- Added server build and start scripts:
+  - `npm run build -w @ecommerce-dashboard/server`
+  - `npm run start -w @ecommerce-dashboard/server`
+- Root build compiles:
+  - shared contracts
+  - Vite client app
+  - bundled Node/Express server
+- Updated server environment example with:
+  - `MONGO_URI`
+  - `JWT_SECRET`
+  - `CLIENT_URL`
+  - `NODE_ENV`
+  - `PORT`
+- Updated client environment example with:
+  - `VITE_API_BASE_URL`
+- Added `client/vercel.json` with:
+  - Vite build output directory
+  - SPA fallback to `index.html`
+- Added `server/render.yaml` for Render setup
+- Updated production CORS to allow credentials from `CLIENT_URL`
+- Updated auth cookies for production:
+  - `httpOnly: true`
+  - `secure: true` when `NODE_ENV=production`
+  - `sameSite: none` in production for cross-domain frontend/backend deployments
+  - local development remains compatible with non-secure `sameSite: lax` cookies
+
+Known deployment notes:
+
+- The frontend and backend are intended to deploy separately.
+- Set `VITE_API_BASE_URL` in Vercel to the deployed Render API URL with `/api`.
+- Set `CLIENT_URL` in Render to the deployed Vercel frontend URL.
+- Use MongoDB Atlas for production `MONGO_URI`.
+- Do not use demo secrets in production.
+- Vite may warn about large chunks during build; this is acceptable for the current portfolio app and can be optimized later with code splitting.
+
 Next phase:
 
-Phase 11 - Deployment
+Phase 12 - WooCommerce Integration

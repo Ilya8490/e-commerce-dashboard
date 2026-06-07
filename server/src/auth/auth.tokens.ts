@@ -26,19 +26,23 @@ export function verifyAuthToken(token: string) {
 }
 
 export function setAuthCookie(response: Response, token: string) {
+  const isProduction = process.env.NODE_ENV === "production";
+
   response.cookie(authCookieName, token, {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
 }
 
 export function clearAuthCookie(response: Response) {
+  const isProduction = process.env.NODE_ENV === "production";
+
   response.clearCookie(authCookieName, {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production"
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction
   });
 }
 
