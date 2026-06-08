@@ -10,6 +10,6 @@ const app = createApp();
 
 await connectDatabase();
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`API server listening on port ${port}`);
 });
