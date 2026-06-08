@@ -324,10 +324,12 @@ Render setup:
 
 - Service type: Web Service
 - Runtime: Node
+- Root directory:
+  - `server`
 - Build command:
-  - `npm install && npm run build -w @ecommerce-dashboard/shared && npm run build -w @ecommerce-dashboard/server`
+  - `npm install && npm run build`
 - Start command:
-  - `npm run start -w @ecommerce-dashboard/server`
+  - `npm run start`
 - Required environment variables:
   - `MONGO_URI`
   - `JWT_SECRET`

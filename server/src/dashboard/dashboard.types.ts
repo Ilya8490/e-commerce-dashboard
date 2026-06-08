@@ -1,4 +1,3 @@
-import type { Product } from "@ecommerce-dashboard/shared";
 import type { TrafficSource } from "../analytics/analytics.enums";
 
 export interface DateRange {
@@ -16,7 +15,16 @@ export interface OrderStatusPoint {
   count: number;
 }
 
-export interface DashboardProduct extends Product {
+export interface DashboardProduct {
+  id: string;
+  userId: string;
+  externalId?: string;
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  soldUnits: number;
+  createdAt: string;
   revenue: number;
   unitsSold: number;
 }
