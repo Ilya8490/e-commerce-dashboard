@@ -49,3 +49,13 @@ export function clearAuthCookie(response: Response) {
 export function readAuthCookie(cookies: Record<string, string | undefined>) {
   return cookies[authCookieName];
 }
+
+export function readBearerToken(authorization: string | undefined) {
+  if (!authorization?.startsWith("Bearer ")) {
+    return undefined;
+  }
+
+  const token = authorization.slice("Bearer ".length).trim();
+
+  return token.length > 0 ? token : undefined;
+}

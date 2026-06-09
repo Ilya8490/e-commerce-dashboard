@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { apiClient } from "../api/client";
+import { apiClient, clearStoredAuthToken, storeAuthToken } from "../api/client";
 import type { AuthUser, LoginPayload, RegisterPayload } from "../types/auth";
 
 interface AuthContextValue {
@@ -23,6 +23,7 @@ interface AuthContextValue {
 
 interface AuthResponse {
   user: AuthUser;
+  token?: string;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -50,9 +51,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginMutation = useMutation({
     mutationFn: async (payload: LoginPayload) => {
       const response = await apiClient.post<AuthResponse>("/auth/login", payload);
-      return response.data.user;
+      return response.data;
     },
-    onSuccess: (user) => {
+    onSuccess: ({ token, user }) => {
+      if (token) {
+        storeAuthToken(token);
+      }
+
       queryClient.setQueryData(["auth", "me"], user);
       navigate("/dashboard", { replace: true });
     }
@@ -60,9 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const registerMutation = useMutation({
     mutationFn: async (payload: RegisterPayload) => {
       const response = await apiClient.post<AuthResponse>("/auth/register", payload);
-      return response.data.user;
+      return response.data;
     },
-    onSuccess: (user) => {
+    onSuccess: ({ token, user }) => {
+      if (token) {
+        storeAuthToken(token);
+      }
+
       queryClient.setQueryData(["auth", "me"], user);
       navigate("/dashboard", { replace: true });
     }
@@ -72,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiClient.post("/auth/logout");
     },
     onSuccess: () => {
+      clearStoredAuthToken();
       queryClient.removeQueries({ queryKey: ["auth"] });
       navigate("/login", { replace: true });
     }

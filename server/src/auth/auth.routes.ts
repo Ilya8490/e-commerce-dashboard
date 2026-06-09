@@ -56,7 +56,7 @@ authRouter.post("/register", async (request, response) => {
   const token = signAuthToken(user._id.toString());
 
   setAuthCookie(response, token);
-  response.status(201).json({ user: publicUser(user) });
+  response.status(201).json({ user: publicUser(user), token });
 });
 
 authRouter.post("/login", async (request, response) => {
@@ -84,7 +84,7 @@ authRouter.post("/login", async (request, response) => {
   const token = signAuthToken(user._id.toString());
 
   setAuthCookie(response, token);
-  response.status(200).json({ user: publicUser(user) });
+  response.status(200).json({ user: publicUser(user), token });
 });
 
 authRouter.post("/logout", (_request, response) => {

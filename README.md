@@ -301,6 +301,7 @@ Production cookie/auth notes:
 - Cookies use `sameSite: none` in production for Vercel-to-Render cross-site requests.
 - CORS allows credentials and uses `CLIENT_URL` as the allowed frontend origin.
 - Local development keeps non-secure `sameSite: lax` cookies for `localhost`.
+- Login/register responses also include a bearer token fallback with the same JWT lifetime as the cookie. The client stores it locally and sends it as `Authorization: Bearer ...` for browsers such as Safari that may block cross-site cookies between `vercel.app` and `onrender.com`.
 
 ### Vercel Frontend Deployment
 
@@ -762,6 +763,7 @@ Known deployment notes:
 - Use MongoDB Atlas for production `MONGO_URI`.
 - Do not use demo secrets in production.
 - Vite may warn about large chunks during build; this is acceptable for the current portfolio app and can be optimized later with code splitting.
+- For Safari verification, log in and then confirm the next `/api/auth/me` request returns `200`. If Safari does not show an `auth_token` cookie for the Render domain, the request should still include an `Authorization` header and stay authenticated.
 
 ## Phase 12 Status
 

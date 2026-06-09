@@ -73,6 +73,43 @@ describe("authentication API", () => {
     });
   });
 
+  it("returns a bearer token on login for browsers that block cross-site cookies", async () => {
+    await request(app).post("/api/auth/register").send({
+      email: "owner@example.com",
+      password: "demo1234",
+      storeName: "Demo Store"
+    });
+
+    const login = await request(app).post("/api/auth/login").send({
+      email: "owner@example.com",
+      password: "demo1234"
+    });
+
+    expect(login.status).toBe(200);
+    expect(login.body.token).toEqual(expect.any(String));
+  });
+
+  it("allows access to protected routes with a bearer token when no cookie is sent", async () => {
+    await request(app).post("/api/auth/register").send({
+      email: "owner@example.com",
+      password: "demo1234",
+      storeName: "Demo Store"
+    });
+
+    const login = await request(app).post("/api/auth/login").send({
+      email: "owner@example.com",
+      password: "demo1234"
+    });
+
+    const me = await request(app).get("/api/auth/me").set("Authorization", `Bearer ${login.body.token}`);
+
+    expect(me.status).toBe(200);
+    expect(me.body.user).toMatchObject({
+      email: "owner@example.com",
+      storeName: "Demo Store"
+    });
+  });
+
   it("rejects invalid login credentials with the standard error format", async () => {
     const response = await request(app).post("/api/auth/login").send({
       email: "missing@example.com",

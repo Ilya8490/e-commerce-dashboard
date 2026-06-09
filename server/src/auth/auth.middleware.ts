@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 
-import { readAuthCookie, verifyAuthToken } from "./auth.tokens";
+import { readAuthCookie, readBearerToken, verifyAuthToken } from "./auth.tokens";
 import { UserModel } from "./user.model";
 
 export interface AuthenticatedRequest extends Request {
@@ -13,7 +13,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export async function requireAuth(request: Request, response: Response, next: NextFunction) {
-  const token = readAuthCookie(request.cookies);
+  const token = readAuthCookie(request.cookies) ?? readBearerToken(request.get("authorization"));
 
   if (!token) {
     response.status(401).json({ error: "Authentication required" });
